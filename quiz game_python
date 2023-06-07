@@ -1,0 +1,61 @@
+import requests
+import json
+import random
+import pprint
+import html
+url='https://opentdb.com/api.php?amount=1&category=22&difficulty=easy'
+endgame=''
+score_correct=0
+score_incorrect=0
+
+
+while endgame!='quit':
+    r=requests.get(url)
+    if r.status_code != 200:
+        endgame=input('sry problem in retrieving information..pls press "quit" to leave ').lower()
+    else:
+        valid_ans=False
+        qn_num=1
+        data=json.loads(r.text)
+        question=(data['results'][0]['question'])
+        answers=(data['results'][0]['incorrect_answers'])
+        correct_ans=(data['results'][0]['correct_answer'])
+        answers.append(correct_ans)
+        random.shuffle(answers)
+
+        print('\n '+ html.unescape(question) )
+
+        for ans in  answers:
+            print(str(qn_num)+ ' - '+ html.unescape(ans))
+            qn_num+=1
+        while valid_ans==False:
+            
+        
+            userans=input('\n  enter the correct answer number of this ques')
+            try:
+                userans=int(userans)
+                if (userans>len(answers) or userans<0):
+                    print('invalid answer')
+                else:
+                    valid_ans=True
+            except:
+                print('invalid answer.. pls enter valid one\n')
+            
+        userans=answers[int(userans)-1] #for taking quesnum as index of the answers list,coz we need the ans inside it
+
+        if userans==correct_ans:
+            print('\n congrats...correct answer...ans is '+ html.unescape(correct_ans))
+            score_correct+=1
+
+        else:
+            print('sry incorrect ans')
+            score_incorrect+=1
+        print('######################\n')
+        print('yr correct ans  is'+ str(score_correct))
+        
+        print('yr incorrect ans  is'+ str(score_incorrect))
+        endgame=input('\n do u want to continue...press enter...or else type "quit"').lower()
+
+    
+        
+        
